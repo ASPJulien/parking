@@ -9,7 +9,12 @@ config_placeholder = {
 config = {}
 
 
-def readconfig():
+def readconfig() -> dict:
+    """
+    Reads the config file and returns the config if it exists or the placeholder config if it doesn't
+    :return: The config
+    :rtype: dict
+    """
     if exists("config.json"):
         return json.loads(open("config.json").read())
     else:
