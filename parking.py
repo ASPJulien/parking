@@ -1,17 +1,16 @@
 import discord
 import confighandler
 import lastfmhandler
-import json
 from discord.ext import commands
 import userhandler
 
-client = commands.Bot(command_prefix='!')
+client = commands.Bot(command_prefix="!")
 confighandler.config = confighandler.readconfig()
 
 
 @client.event
 async def on_ready():
-    print('Logged in as {0.user}'.format(client))
+    print("Logged in as {0.user}".format(client))
 
 
 @client.command()
@@ -19,13 +18,13 @@ async def last(ctx):
     a = lastfmhandler.get_tracks_recent("jupilian")
     embed = discord.Embed(title=f"Musiques récemment écoutées par {ctx.author.name}",
                           color=discord.Color.blue())
-    embed.set_thumbnail(url=lastfmhandler.get_album(a["recenttracks"]["track"][0])['image'][3]['#text'])
+    embed.set_thumbnail(url=lastfmhandler.get_album(a['recenttracks']['track'][0])['image'][3]['#text'])
 
     for i in range(5):
-        embed.add_field(name=":musical_note:   " + a["recenttracks"]["track"][i][
-            "name"] + f" (x{lastfmhandler.get_track_playcount('jupilian', a['recenttracks']['track'][i])})",
-                        value=f'Par **{a["recenttracks"]["track"][i]["artist"]["#text"]}** (x{lastfmhandler.get_artist_playcount("jupilian", a["recenttracks"]["track"][i])}) '
-                              f'dans **{a["recenttracks"]["track"][i]["album"]["#text"]}** (x{lastfmhandler.get_album_playcount("jupilian", a["recenttracks"]["track"][i])})',
+        embed.add_field(name=":musical_note:   " + a['recenttracks']['track'][i][
+            'name'] + f" (x{lastfmhandler.get_track_playcount('jupilian', a['recenttracks']['track'][i])})",
+                        value=f"Par **{a['recenttracks']['track'][i]['artist']['#text']}** (x{lastfmhandler.get_artist_playcount('jupilian', a['recenttracks']['track'][i])}) "
+                              f"dans **{a['recenttracks']['track'][i]['album']['#text']}** (x{lastfmhandler.get_album_playcount('jupilian', a['recenttracks']['track'][i])})",
                         inline=False)
     await ctx.send(embed=embed)
     pass
@@ -46,9 +45,8 @@ async def link(ctx, ref):
         await ctx.send(embed=embed)
     pass
 
-print(confighandler.get_config()["token"])
-print(confighandler.get_config()["token"])
-print(confighandler.get_config()["token"])
-#client.run(confighandler.config['token'])
-#client.add_command(last)
-#client.add_command(link)
+
+client.run(confighandler.config['token'])
+client.add_command(last)
+client.add_command(link)
+
