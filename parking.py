@@ -6,7 +6,7 @@ import userhandler
 
 client = commands.Bot(command_prefix="!")
 confighandler.config = confighandler.readconfig()
-
+userhandler.users = userhandler.read_db()
 
 @client.event
 async def on_ready():
@@ -15,18 +15,25 @@ async def on_ready():
 
 @client.command()
 async def last(ctx):
-    a = lastfmhandler.get_tracks_recent("jupilian")
-    embed = discord.Embed(title=f"Musiques récemment écoutées par {ctx.author.name}",
-                          color=0x0000ff)
-    embed.set_thumbnail(url=lastfmhandler.get_album(a['recenttracks']['track'][0])['image'][3]['#text'])
+    user = userhandler.get_user(ctx.author.id)
+    if user != "error":   
+        a = lastfmhandler.get_tracks_recent(user)
+        embed = discord.Embed(title=f"Musiques récemment écoutées par {ctx.author.name}",
+                              color=0x5DADEC)
+        embed.set_thumbnail(url=lastfmhandler.get_album(a['recenttracks']['track'][0])['image'][3]['#text'])
 
-    for i in range(5):
-        embed.add_field(name=":musical_note:   " + a['recenttracks']['track'][i][
-            'name'] + f" (x{lastfmhandler.get_track_playcount('jupilian', a['recenttracks']['track'][i])})",
-                        value=f"Par **{a['recenttracks']['track'][i]['artist']['#text']}** (x{lastfmhandler.get_artist_playcount('jupilian', a['recenttracks']['track'][i])}) "
-                              f"dans **{a['recenttracks']['track'][i]['album']['#text']}** (x{lastfmhandler.get_album_playcount('jupilian', a['recenttracks']['track'][i])})",
-                        inline=False)
-    await ctx.send(embed=embed)
+        for i in range(5):
+            embed.add_field(name=":musical_note:   " + a['recenttracks']['track'][i][
+                'name'] + f" (x{lastfmhandler.get_track_playcount(user, a['recenttracks']['track'][i])})",
+                            value=f"Par **{a['recenttracks']['track'][i]['artist']['#text']}** (x{lastfmhandler.get_artist_playcount(user, a['recenttracks']['track'][i])}) "
+                                  f"dans **{a['recenttracks']['track'][i]['album']['#text']}** (x{lastfmhandler.get_album_playcount(user, a['recenttracks']['track'][i])})",
+                            inline=False)
+        await ctx.send(embed=embed)
+    else:
+        embed = discord.Embed(title=":x: Une erreur est survenue!",
+                              description=f"Vous n'avez pas relié de compte, utilisez `!link <identitifant last.fm>` afin d'y remédier.",
+                              color=0xff0000)
+        await ctx.send(embed=embed)
 
 
 @client.command()
@@ -37,7 +44,13 @@ async def link(ctx, ref):
                               description=f'Le compte "{ref}" n\'existe pas.',
                               color=0xff0000)
         await ctx.send(embed=embed)
+    elif userhandler.get_user(ctx.author.id) != "error":
+         embed = discord.Embed(title=":x: Une erreur est survenue!",
+                              description=f'Votre compte est déjà associé à "{userhandler.get_user(ctx.author.id)}"',
+                              color=0xff0000)
+         await ctx.send(embed=embed)
     else:
+        userhandler.link_user(ctx.author.id, ref)
         embed = discord.Embed(title=":white_check_mark: Votre compte a été enregistré!",
                               description=f'Le compte "{ref}" a été associé à {ctx.author.mention}.',
                               color=0x00ff00)
