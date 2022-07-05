@@ -20,8 +20,8 @@ def update_db():
     
 
 def get_user(id):
-    if id in users:
-        return users[id]
+    if str(id) in users:
+        return users[str(id)]
     else:
         return "error"
 
@@ -30,5 +30,5 @@ def lastfm_user_exists(user):
     return 'error' not in a
 
 def link_user(id, user):
-    users[id] = user
+    users[str(id)] = user
     update_db()
