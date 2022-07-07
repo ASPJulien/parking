@@ -51,16 +51,18 @@ def get_artist_playcount(user: str, track: dict) -> int:
     return r['artist']['stats']['userplaycount']
 
 
-def get_tracks_recent(user: str) -> dict:
+def get_tracks_recent(user: str, count: int) -> dict:
     """
-    Returns the user's 5 most recent tracks
+    Returns the user's most recent tracks
     :param user: The user's last.fm username
     :type user: str
-    :return: The user's 5 most recent tracks
+    :param count: Numbre of tracks to fetch for
+    :type: count: int
+    :return: The user's most recent tracks
     :rtype: dict
     """
     return requests.get(
-        f"https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={user}&api_key={apikey}&format=json&limit=5").json()
+        f"https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={user}&api_key={apikey}&format=json&limit={count}").json()
 
 
 # from track
