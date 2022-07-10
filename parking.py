@@ -34,10 +34,14 @@ async def last(ctx, ref = 3):
                               color=0x5DADEC)
         embed.set_thumbnail(url=lastfmhandler.get_album(a['recenttracks']['track'][0])['image'][3]['#text'])
         for i in range(int(ref)):
+
+            embedMessage = f"Par **{a['recenttracks']['track'][i]['artist']['#text']}** (x{lastfmhandler.get_artist_playcount(user, a['recenttracks']['track'][i])})"
+            if a['recenttracks']['track'][i]['album']['#text']:
+                embedMessage += f" dans **{a['recenttracks']['track'][i]['album']['#text']}** (x{lastfmhandler.get_album_playcount(user, a['recenttracks']['track'][i])})"
+
             embed.add_field(name=":musical_note:   " + a['recenttracks']['track'][i][
                 'name'] + f" (x{lastfmhandler.get_track_playcount(user, a['recenttracks']['track'][i])})",
-                            value=f"Par **{a['recenttracks']['track'][i]['artist']['#text']}** (x{lastfmhandler.get_artist_playcount(user, a['recenttracks']['track'][i])}) "
-                                  f"dans **{a['recenttracks']['track'][i]['album']['#text']}** (x{lastfmhandler.get_album_playcount(user, a['recenttracks']['track'][i])})",
+                            value=embedMessage,
                             inline=False)
         embed.set_footer(text=f"{ref} item shown. Process time: {str(round(time.time()-start_time,2))}s")
         await ctx.send(embed=embed)
